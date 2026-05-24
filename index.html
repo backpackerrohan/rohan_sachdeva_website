@@ -64,48 +64,7 @@
   }
   
 // ── Contact Form ──
-async function handleFormSubmit(e) {
-  e.preventDefault();
-  const btn = document.getElementById('form-submit-btn');
-  const btnText = document.getElementById('btn-text');
-  const btnLoading = document.getElementById('btn-loading');
-  btn.disabled = true;
-  btnText.style.display = 'none';
-  btnLoading.style.display = 'inline';
 
-  const form = document.getElementById('contact-form');
-  const data = new FormData(form);
-
-  try {
-    const response = await fetch('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(data).toString()
-    });
-    if (response.ok) {
-      form.style.display = 'none';
-      document.getElementById('form-success').style.display = 'block';
-      document.getElementById('form-error').style.display = 'none';
-    } else {
-      throw new Error('Network response was not ok');
-    }
-  } catch (err) {
-    btn.disabled = false;
-    btnText.style.display = 'inline';
-    btnLoading.style.display = 'none';
-    document.getElementById('form-error').style.display = 'block';
-  }
-}
-
-function resetForm() {
-  document.getElementById('contact-form').reset();
-  document.getElementById('contact-form').style.display = 'block';
-  document.getElementById('form-success').style.display = 'none';
-  document.getElementById('form-error').style.display = 'none';
-  document.getElementById('form-submit-btn').disabled = false;
-  document.getElementById('btn-text').style.display = 'inline';
-  document.getElementById('btn-loading').style.display = 'none';
-}
 
 </script>
 
@@ -379,75 +338,6 @@ footer{border-top:1px solid rgba(200,169,110,.12);padding:1.4rem 4rem;
 footer p{font-size:.73rem;color:rgba(255,255,255,.28);}
 
 
-/* ══════════ CONTACT FORM ══════════ */
-.contact-wrap{ max-width:680px; }
-.contact-form{ text-align:left; }
-.form-row{ display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
-.form-group{ display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.2rem; }
-.form-label{ font-size:.72rem; letter-spacing:.15em; text-transform:uppercase;
-  color:rgba(255,255,255,.5); font-weight:400; }
-.form-input{
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(200,169,110,.2);
-  color:var(--white);
-  padding:.9rem 1.1rem;
-  font-family:'DM Sans',sans-serif;
-  font-size:.9rem;
-  outline:none;
-  transition:border-color .25s, background .25s;
-  width:100%;
-}
-.form-input::placeholder{ color:rgba(255,255,255,.25); }
-.form-input:focus{
-  border-color:var(--accent);
-  background:rgba(200,169,110,.06);
-}
-.form-textarea{ resize:vertical; min-height:130px; }
-.form-btn{
-  display:inline-block;
-  background:var(--accent);
-  color:var(--navy);
-  border:none;
-  padding:.9rem 2.5rem;
-  font-family:'DM Sans',sans-serif;
-  font-size:.78rem;
-  letter-spacing:.15em;
-  text-transform:uppercase;
-  font-weight:600;
-  cursor:pointer;
-  transition:background .25s, transform .2s;
-  margin-top:.5rem;
-  width:100%;
-}
-.form-btn:hover{ background:var(--accent2); transform:translateY(-1px); }
-.form-btn:disabled{ opacity:.6; cursor:not-allowed; transform:none; }
-.form-success{
-  text-align:center;
-  padding:3rem 2rem;
-  border:1px solid rgba(200,169,110,.2);
-  background:rgba(200,169,110,.05);
-}
-.form-success-icon{
-  width:56px; height:56px; border-radius:50%;
-  background:rgba(200,169,110,.15);
-  border:2px solid var(--accent);
-  display:flex; align-items:center; justify-content:center;
-  font-size:1.4rem; color:var(--accent);
-  margin:0 auto 1.2rem;
-}
-.form-success h3{ font-family:'Cormorant Garamond',serif; font-size:1.8rem;
-  font-weight:400; color:var(--white); margin-bottom:.5rem; }
-.form-success p{ color:rgba(255,255,255,.55); font-size:.9rem; }
-.form-error{
-  margin-top:1rem; padding:1rem 1.2rem;
-  background:rgba(220,60,60,.08);
-  border:1px solid rgba(220,60,60,.25);
-  color:rgba(255,255,255,.65); font-size:.85rem;
-}
-.form-error a{ color:var(--accent); }
-@media(max-width:600px){
-  .form-row{ grid-template-columns:1fr; }
-}
 
 /* ══════════ REVEAL ══════════ */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .65s,transform .65s;}
@@ -482,36 +372,47 @@ footer p{font-size:.73rem;color:rgba(255,255,255,.28);}
   <!-- ── Google Analytics ── -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-60RSWBGMM5">
 // ── Contact Form ──
+// SETUP: Replace YOUR_FORMSPREE_ID with your ID from formspree.io
+// e.g. if your Formspree URL is https://formspree.io/f/xabc1234 → use 'xabc1234'
+const FORMSPREE_ID = 'YOUR_FORMSPREE_ID';
+
 async function handleFormSubmit(e) {
   e.preventDefault();
   const btn = document.getElementById('form-submit-btn');
   const btnText = document.getElementById('btn-text');
   const btnLoading = document.getElementById('btn-loading');
+  const errorBox = document.getElementById('form-error');
+
+  if (FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
+    errorBox.innerHTML = '⚠ Form not yet configured. See setup instructions or email <a href="mailto:contact@rohansachdeva.com">contact@rohansachdeva.com</a>';
+    errorBox.style.display = 'block';
+    return;
+  }
+
   btn.disabled = true;
   btnText.style.display = 'none';
   btnLoading.style.display = 'inline';
-
-  const form = document.getElementById('contact-form');
-  const data = new FormData(form);
+  errorBox.style.display = 'none';
 
   try {
-    const response = await fetch('/', {
+    const response = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(data).toString()
+      body: new FormData(document.getElementById('contact-form')),
+      headers: { 'Accept': 'application/json' }
     });
+    const data = await response.json();
     if (response.ok) {
-      form.style.display = 'none';
+      document.getElementById('contact-form').style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
-      document.getElementById('form-error').style.display = 'none';
     } else {
-      throw new Error('Network response was not ok');
+      throw new Error(data.errors ? data.errors.map(e => e.message).join(', ') : 'Submission failed');
     }
   } catch (err) {
     btn.disabled = false;
     btnText.style.display = 'inline';
     btnLoading.style.display = 'none';
-    document.getElementById('form-error').style.display = 'block';
+    errorBox.innerHTML = '⚠ Something went wrong. Please email directly at <a href="mailto:contact@rohansachdeva.com">contact@rohansachdeva.com</a>';
+    errorBox.style.display = 'block';
   }
 }
 
@@ -533,36 +434,47 @@ function resetForm() {
     gtag('config', 'G-60RSWBGMM5');
   
 // ── Contact Form ──
+// SETUP: Replace YOUR_FORMSPREE_ID with your ID from formspree.io
+// e.g. if your Formspree URL is https://formspree.io/f/xabc1234 → use 'xabc1234'
+const FORMSPREE_ID = 'YOUR_FORMSPREE_ID';
+
 async function handleFormSubmit(e) {
   e.preventDefault();
   const btn = document.getElementById('form-submit-btn');
   const btnText = document.getElementById('btn-text');
   const btnLoading = document.getElementById('btn-loading');
+  const errorBox = document.getElementById('form-error');
+
+  if (FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
+    errorBox.innerHTML = '⚠ Form not yet configured. See setup instructions or email <a href="mailto:contact@rohansachdeva.com">contact@rohansachdeva.com</a>';
+    errorBox.style.display = 'block';
+    return;
+  }
+
   btn.disabled = true;
   btnText.style.display = 'none';
   btnLoading.style.display = 'inline';
-
-  const form = document.getElementById('contact-form');
-  const data = new FormData(form);
+  errorBox.style.display = 'none';
 
   try {
-    const response = await fetch('/', {
+    const response = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(data).toString()
+      body: new FormData(document.getElementById('contact-form')),
+      headers: { 'Accept': 'application/json' }
     });
+    const data = await response.json();
     if (response.ok) {
-      form.style.display = 'none';
+      document.getElementById('contact-form').style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
-      document.getElementById('form-error').style.display = 'none';
     } else {
-      throw new Error('Network response was not ok');
+      throw new Error(data.errors ? data.errors.map(e => e.message).join(', ') : 'Submission failed');
     }
   } catch (err) {
     btn.disabled = false;
     btnText.style.display = 'inline';
     btnLoading.style.display = 'none';
-    document.getElementById('form-error').style.display = 'block';
+    errorBox.innerHTML = '⚠ Something went wrong. Please email directly at <a href="mailto:contact@rohansachdeva.com">contact@rohansachdeva.com</a>';
+    errorBox.style.display = 'block';
   }
 }
 
@@ -840,75 +752,11 @@ function resetForm() {
     <span class="section-tag">Get in Touch</span>
     <h2 class="section-title">Let's Connect</h2>
     <p>Open to conversations about cybersecurity, internet governance, policy, and meaningful collaboration.</p>
-
-    <!-- Contact links -->
     <div class="contact-links">
       <a href="mailto:contact@rohansachdeva.com" class="contact-link">✉ contact@rohansachdeva.com</a>
       <a href="https://www.rohansachdeva.com" class="contact-link" target="_blank">🌐 rohansachdeva.com</a>
       <a href="tel:+61469312118" class="contact-link">📞 0469 312 118</a>
     </div>
-
-    <!-- Divider -->
-    <div style="display:flex;align-items:center;gap:1.5rem;margin:3rem 0;">
-      <div style="flex:1;height:1px;background:rgba(200,169,110,.15);"></div>
-      <span style="font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);">or send a message</span>
-      <div style="flex:1;height:1px;background:rgba(200,169,110,.15);"></div>
-    </div>
-
-    <!-- Netlify Form -->
-    <form
-      name="contact"
-      method="POST"
-      data-netlify="true"
-      netlify-honeypot="bot-field"
-      id="contact-form"
-      onsubmit="handleFormSubmit(event)"
-      class="contact-form"
-    >
-      <!-- Netlify honeypot (hidden, catches bots) -->
-      <input type="hidden" name="form-name" value="contact">
-      <p style="display:none;"><input name="bot-field"></p>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="name">Full Name</label>
-          <input class="form-input" type="text" id="name" name="name" placeholder="Your name" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="email">Email Address</label>
-          <input class="form-input" type="email" id="email" name="email" placeholder="your@email.com" required>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="subject">Subject / Organisation</label>
-        <input class="form-input" type="text" id="subject" name="subject" placeholder="What's this about?" required>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="message">Message</label>
-        <textarea class="form-input form-textarea" id="message" name="message" placeholder="Your message..." required rows="5"></textarea>
-      </div>
-
-      <button type="submit" class="form-btn" id="form-submit-btn">
-        <span id="btn-text">Send Message</span>
-        <span id="btn-loading" style="display:none;">Sending...</span>
-      </button>
-    </form>
-
-    <!-- Success message (hidden by default) -->
-    <div id="form-success" style="display:none;" class="form-success">
-      <div class="form-success-icon">✓</div>
-      <h3>Message sent!</h3>
-      <p>Thanks for reaching out — I'll get back to you soon.</p>
-      <button class="form-btn" onclick="resetForm()" style="margin-top:1.5rem;max-width:200px;">Send another</button>
-    </div>
-
-    <!-- Error message (hidden by default) -->
-    <div id="form-error" style="display:none;" class="form-error">
-      ⚠ Something went wrong. Please email me directly at <a href="mailto:contact@rohansachdeva.com">contact@rohansachdeva.com</a>
-    </div>
-
   </div>
   <footer>
     <p>© 2026 Rohan Sachdeva · Melbourne, Australia</p>
@@ -982,36 +830,47 @@ function resetBigSlider() {
 }
 
 // ── Contact Form ──
+// SETUP: Replace YOUR_FORMSPREE_ID with your ID from formspree.io
+// e.g. if your Formspree URL is https://formspree.io/f/xabc1234 → use 'xabc1234'
+const FORMSPREE_ID = 'YOUR_FORMSPREE_ID';
+
 async function handleFormSubmit(e) {
   e.preventDefault();
   const btn = document.getElementById('form-submit-btn');
   const btnText = document.getElementById('btn-text');
   const btnLoading = document.getElementById('btn-loading');
+  const errorBox = document.getElementById('form-error');
+
+  if (FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
+    errorBox.innerHTML = '⚠ Form not yet configured. See setup instructions or email <a href="mailto:contact@rohansachdeva.com">contact@rohansachdeva.com</a>';
+    errorBox.style.display = 'block';
+    return;
+  }
+
   btn.disabled = true;
   btnText.style.display = 'none';
   btnLoading.style.display = 'inline';
-
-  const form = document.getElementById('contact-form');
-  const data = new FormData(form);
+  errorBox.style.display = 'none';
 
   try {
-    const response = await fetch('/', {
+    const response = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(data).toString()
+      body: new FormData(document.getElementById('contact-form')),
+      headers: { 'Accept': 'application/json' }
     });
+    const data = await response.json();
     if (response.ok) {
-      form.style.display = 'none';
+      document.getElementById('contact-form').style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
-      document.getElementById('form-error').style.display = 'none';
     } else {
-      throw new Error('Network response was not ok');
+      throw new Error(data.errors ? data.errors.map(e => e.message).join(', ') : 'Submission failed');
     }
   } catch (err) {
     btn.disabled = false;
     btnText.style.display = 'inline';
     btnLoading.style.display = 'none';
-    document.getElementById('form-error').style.display = 'block';
+    errorBox.innerHTML = '⚠ Something went wrong. Please email directly at <a href="mailto:contact@rohansachdeva.com">contact@rohansachdeva.com</a>';
+    errorBox.style.display = 'block';
   }
 }
 
