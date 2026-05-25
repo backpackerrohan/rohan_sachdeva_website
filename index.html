@@ -20,9 +20,36 @@
 <meta name="twitter:description" content="Cybersecurity professional and Internet Governance leader. Internet Society Early Career Fellow 2026. Melbourne, Australia.">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Person","name":"Rohan Sachdeva","url":"https://www.rohansachdeva.com","email":"contact@rohansachdeva.com","jobTitle":"Cybersecurity Professional & Compliance Officer","worksFor":{"@type":"Organization","name":".au Domain Administration (auDA)","url":"https://www.auda.org.au"},"alumniOf":{"@type":"CollegeOrUniversity","name":"La Trobe University","url":"https://www.latrobe.edu.au"},"address":{"@type":"PostalAddress","addressLocality":"Melbourne","addressCountry":"AU"},"sameAs":["https://www.linkedin.com/in/rohan-sachdeva","https://www.rohansachdeva.com"]}
+
+// ── Secret editor shortcut: Ctrl + Shift + E ──
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+    e.preventDefault();
+    startEditMode();
+  }
+});
+
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-60RSWBGMM5"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-60RSWBGMM5');</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-60RSWBGMM5">
+// ── Secret editor shortcut: Ctrl + Shift + E ──
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+    e.preventDefault();
+    startEditMode();
+  }
+});
+
+</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-60RSWBGMM5');
+// ── Secret editor shortcut: Ctrl + Shift + E ──
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+    e.preventDefault();
+    startEditMode();
+  }
+});
+
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0d1b2a;--navy2:#1a2e42;--steel:#2d4a6b;--accent:#c8a96e;--accent2:#e8c99e;--cream:#f5f0e8;--white:#fff;--gray:#8a9bb0;--muted:#6b7f94;--nav-h:68px;}
@@ -179,6 +206,48 @@ footer p{font-size:.73rem;color:rgba(255,255,255,.28);}
 /* REVEAL */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .65s,transform .65s;}
 .reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ── VISUAL EDITOR ── */
+#edit-trigger{display:none;}
+
+#edit-toolbar{
+  display:none;position:fixed;bottom:1.5rem;left:1.5rem;z-index:9999;
+  background:rgba(13,27,42,.97);border:1px solid rgba(200,169,110,.3);
+  padding:.75rem 1rem;
+  flex-direction:row;align-items:center;gap:.75rem;
+  backdrop-filter:blur(12px);
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.edit-mode-badge{
+  font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--accent);font-weight:500;padding-right:.75rem;
+  border-right:1px solid rgba(200,169,110,.2);
+}
+.edit-btn{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.45rem .9rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-weight:500;
+  transition:all .2s;
+}
+.edit-btn-save{background:var(--accent);color:var(--navy);}
+.edit-btn-save:hover{background:var(--accent2);}
+.edit-btn-cancel{background:transparent;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.15);}
+.edit-btn-cancel:hover{color:white;border-color:rgba(255,255,255,.4);}
+
+/* Editable element highlight */
+.edit-active [data-editable]:hover{
+  outline:2px dashed rgba(200,169,110,.5);
+  outline-offset:3px;
+  cursor:text;
+}
+.edit-active [data-editable]:focus{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
+
 /* RESPONSIVE */
 @media(max-width:960px){
   nav{padding:0 1.5rem;}
@@ -201,6 +270,53 @@ footer p{font-size:.73rem;color:rgba(255,255,255,.28);}
   .gallery-header{padding:3rem 1.5rem 1.5rem;}
   footer{flex-direction:column;gap:.4rem;text-align:center;padding:1rem;}
 }
+
+/* ── EDITOR MODAL ── */
+#editor-modal{
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+}
+#editor-modal.open{display:flex;}
+#editor-modal-box{
+  background:var(--navy2);border:1px solid rgba(200,169,110,.35);
+  padding:2.5rem;min-width:320px;max-width:400px;width:90%;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+#editor-modal-box h3{
+  font-family:'Cormorant Garamond',serif;font-size:1.6rem;
+  font-weight:400;color:var(--white);margin-bottom:.4rem;
+}
+#editor-modal-box p{font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:1.5rem;}
+#editor-pwd-input{
+  width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(200,169,110,.25);
+  color:var(--white);padding:.8rem 1rem;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;
+  outline:none;margin-bottom:.5rem;letter-spacing:.1em;
+}
+#editor-pwd-input:focus{border-color:var(--accent);}
+#editor-pwd-error{
+  font-size:.75rem;color:#e06060;margin-bottom:.8rem;
+  display:none;
+}
+.editor-modal-btns{display:flex;gap:.75rem;margin-top:1rem;}
+#editor-modal-submit{
+  flex:1;background:var(--accent);color:var(--navy);
+  border:none;padding:.75rem;font-family:'DM Sans',sans-serif;
+  font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:600;cursor:pointer;transition:background .2s;
+}
+#editor-modal-submit:hover{background:var(--accent2);}
+#editor-modal-cancel{
+  background:transparent;color:rgba(255,255,255,.45);
+  border:1px solid rgba(255,255,255,.15);padding:.75rem 1.2rem;
+  font-family:'DM Sans',sans-serif;font-size:.78rem;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  transition:all .2s;
+}
+#editor-modal-cancel:hover{color:white;border-color:rgba(255,255,255,.4);}
+
 </style>
 </head>
 <body>
@@ -502,6 +618,168 @@ function resetBigSlider() {
   clearTimeout(bTimer);
   bTimer = setTimeout(() => goBigSlide(1), 3000);
 }
+
+// ── VISUAL EDITOR ──
+const EDIT_PASSWORD = 'Roski2026'; // Change this to your own password
+
+// Elements that should be editable (text only, not images/structure)
+const EDITABLE_SELECTORS = [
+  '.hero-content h1', '.hero-desc', '.pill',
+  '.home-ws-title', '.home-ws-body', '.home-ws-date',
+  '.big-ws-title', '.big-ws-body', '.big-ws-date',
+  '.about-text p', '.skill-tag',
+  '.exp-role', '.exp-org', '.exp-desc', '.exp-date',
+  '.ach-title', '.ach-desc',
+  '.fellow-name', '.fellow-sub',
+  '.section-title', '.section-tag',
+  '.stat-num', '.stat-label',
+  'footer p',
+  '.contact-wrap p',
+  '.orgs-label'
+].join(',');
+
+let isEditMode = false;
+
+function startEditMode() {
+  // Show custom modal instead of prompt() (prompt is blocked in many contexts)
+  const modal = document.getElementById('editor-modal');
+  const input = document.getElementById('editor-pwd-input');
+  const err   = document.getElementById('editor-pwd-error');
+  modal.classList.add('open');
+  err.style.display = 'none';
+  input.value = '';
+  setTimeout(() => input.focus(), 50);
+}
+
+function submitEditorPwd() {
+  const input = document.getElementById('editor-pwd-input');
+  const err   = document.getElementById('editor-pwd-error');
+  if (input.value !== EDIT_PASSWORD) {
+    err.style.display = 'block';
+    input.value = '';
+    input.focus();
+    return;
+  }
+  closeEditorModal();
+  isEditMode = true;
+  document.getElementById('edit-trigger').style.display = 'none';
+  document.getElementById('edit-toolbar').style.display = 'flex';
+  document.body.classList.add('edit-active');
+  document.querySelectorAll(EDITABLE_SELECTORS).forEach(el => {
+    el.setAttribute('data-editable', 'true');
+    el.setAttribute('contenteditable', 'true');
+    el.setAttribute('spellcheck', 'true');
+    el.style.cursor = 'text';
+  });
+  const tip = document.createElement('div');
+  tip.id = 'edit-tip';
+  tip.style.cssText = 'position:fixed;top:calc(var(--nav-h) + 1rem);left:50%;transform:translateX(-50%);background:rgba(13,27,42,.95);border:1px solid rgba(200,169,110,.3);padding:.6rem 1.4rem;font-size:.75rem;color:rgba(255,255,255,.7);z-index:9999;letter-spacing:.05em;backdrop-filter:blur(8px);white-space:nowrap;';
+  tip.innerHTML = '✏️ Click any text to edit &nbsp;·&nbsp; Navigate pages normally &nbsp;·&nbsp; Click <b style="color:#c8a96e">Save & Download</b> when done';
+  document.body.appendChild(tip);
+  setTimeout(() => { if(tip) tip.remove(); }, 6000);
+}
+
+function closeEditorModal() {
+  document.getElementById('editor-modal').classList.remove('open');
+  document.getElementById('editor-pwd-input').value = '';
+}
+
+
+function exitEditMode() {
+  isEditMode = false;
+  // edit trigger stays hidden
+  document.getElementById('edit-toolbar').style.display = 'none';
+  document.body.classList.remove('edit-active');
+
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    el.removeAttribute('contenteditable');
+    el.removeAttribute('data-editable');
+    el.style.cursor = '';
+  });
+
+  const tip = document.getElementById('edit-tip');
+  if (tip) tip.remove();
+}
+
+function saveAndDownload() {
+  // Clean up edit mode attributes before saving
+  document.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+  document.querySelectorAll('[data-editable]').forEach(el => el.removeAttribute('data-editable'));
+  document.body.classList.remove('edit-active');
+  document.getElementById('edit-toolbar').style.display = 'none';
+  const tip = document.getElementById('edit-tip');
+  if (tip) tip.remove();
+
+  // Capture clean HTML
+  const html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
+
+  // Download
+  const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  isEditMode = false;
+  // edit trigger stays hidden
+
+  // Show confirmation
+  const msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;top:calc(var(--nav-h) + 1rem);left:50%;transform:translateX(-50%);background:rgba(13,27,42,.95);border:1px solid rgba(200,169,110,.5);padding:.7rem 1.6rem;font-size:.78rem;color:var(--accent);z-index:9999;letter-spacing:.05em;backdrop-filter:blur(8px);white-space:nowrap;';
+  msg.textContent = 'index.html downloaded — drag it to Vercel to deploy!';
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 5000);
+}
+
+
+
+// ── Secret editor shortcut: Ctrl + Shift + E ──
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+    e.preventDefault();
+    startEditMode();
+  }
+});
+
+
+// ── Secret editor shortcut: Ctrl + Shift + E ──
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+    e.preventDefault();
+    startEditMode();
+  }
+});
+
 </script>
+
+<!-- ── VISUAL EDITOR ── -->
+<!-- edit trigger hidden - use Ctrl+Shift+E to activate -->
+
+<div id="edit-toolbar">
+  <span class="edit-mode-badge">✏️ Edit Mode</span>
+  <button class="edit-btn edit-btn-save" onclick="saveAndDownload()">⬇ Save &amp; Download</button>
+  <button class="edit-btn edit-btn-cancel" onclick="exitEditMode()">✕ Cancel</button>
+</div>
+
+
+<!-- ── EDITOR PASSWORD MODAL ── -->
+<div id="editor-modal">
+  <div id="editor-modal-box">
+    <h3>Edit Mode</h3>
+    <p>Enter your password to start editing</p>
+    <input type="password" id="editor-pwd-input" placeholder="Password"
+      onkeydown="if(event.key==='Enter')submitEditorPwd()">
+    <div id="editor-pwd-error">Incorrect password. Try again.</div>
+    <div class="editor-modal-btns">
+      <button id="editor-modal-submit" onclick="submitEditorPwd()">Unlock</button>
+      <button id="editor-modal-cancel" onclick="closeEditorModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
