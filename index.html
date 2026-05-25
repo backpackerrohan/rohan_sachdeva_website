@@ -662,7 +662,7 @@ function submitEditorPwd() {
   }
   closeEditorModal();
   isEditMode = true;
-  document.getElementById('edit-trigger').style.display = 'none';
+  const _et = document.getElementById('edit-trigger'); if(_et) _et.style.display = 'none';
   document.getElementById('edit-toolbar').style.display = 'flex';
   document.body.classList.add('edit-active');
   document.querySelectorAll(EDITABLE_SELECTORS).forEach(el => {
@@ -687,7 +687,7 @@ function closeEditorModal() {
 
 function exitEditMode() {
   isEditMode = false;
-  // edit trigger stays hidden
+  const _et2 = document.getElementById('edit-trigger'); if(_et2) _et2.style.display = 'none';
   document.getElementById('edit-toolbar').style.display = 'none';
   document.body.classList.remove('edit-active');
 
@@ -702,37 +702,21 @@ function exitEditMode() {
 }
 
 function saveAndDownload() {
-  // Clean up edit mode attributes before saving
+  // Exit edit mode cleanly - no auto-download
   document.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
   document.querySelectorAll('[data-editable]').forEach(el => el.removeAttribute('data-editable'));
   document.body.classList.remove('edit-active');
-  document.getElementById('edit-toolbar').style.display = 'none';
+  const toolbar = document.getElementById('edit-toolbar');
+  if (toolbar) toolbar.style.display = 'none';
   const tip = document.getElementById('edit-tip');
   if (tip) tip.remove();
-
-  // Capture clean HTML
-  const html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
-
-  // Download
-  const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'index.html';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
   isEditMode = false;
-  // edit trigger stays hidden
 
-  // Show confirmation
   const msg = document.createElement('div');
-  msg.style.cssText = 'position:fixed;top:calc(var(--nav-h) + 1rem);left:50%;transform:translateX(-50%);background:rgba(13,27,42,.95);border:1px solid rgba(200,169,110,.5);padding:.7rem 1.6rem;font-size:.78rem;color:var(--accent);z-index:9999;letter-spacing:.05em;backdrop-filter:blur(8px);white-space:nowrap;';
-  msg.textContent = 'index.html downloaded — drag it to Vercel to deploy!';
+  msg.style.cssText = 'position:fixed;top:calc(var(--nav-h)+1rem);left:50%;transform:translateX(-50%);background:rgba(13,27,42,.95);border:1px solid rgba(200,169,110,.5);padding:.7rem 1.6rem;font-size:.78rem;color:var(--accent);z-index:9999;letter-spacing:.05em;backdrop-filter:blur(8px);white-space:nowrap;';
+  msg.textContent = '✓ Changes saved!';
   document.body.appendChild(msg);
-  setTimeout(() => msg.remove(), 5000);
+  setTimeout(() => msg.remove(), 3000);
 }
 
 
@@ -757,11 +741,11 @@ document.addEventListener('keydown', function(e) {
 </script>
 
 <!-- ── VISUAL EDITOR ── -->
-<!-- edit trigger hidden - use Ctrl+Shift+E to activate -->
+<div id="edit-trigger" style="display:none;"></div>
 
 <div id="edit-toolbar">
   <span class="edit-mode-badge">✏️ Edit Mode</span>
-  <button class="edit-btn edit-btn-save" onclick="saveAndDownload()">⬇ Save &amp; Download</button>
+  <button class="edit-btn edit-btn-save" onclick="saveAndDownload()">✓ Save Changes</button>
   <button class="edit-btn edit-btn-cancel" onclick="exitEditMode()">✕ Cancel</button>
 </div>
 
